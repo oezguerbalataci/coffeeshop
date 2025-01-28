@@ -63,30 +63,9 @@ A modern, feature-rich mobile application for a coffee shop built with React Nat
 
 ## Screenshots
 
-### Authentication & Onboarding
-
-![Welcome Screen](./screenshots/1.png)
-_Welcome screen with beautiful background and get started button_
-
-### Product Browsing
-
-![Home Screen](./screenshots/3.png)
-_Home screen with product grid and category filters_
-
-### Product Details
-
-![Product Details](./screenshots/4.png)
-_Detailed product view with size selection and add to cart_
-
-### Shopping Cart
-
-![Shopping Cart](./screenshots/5.png)
-_Cart view with product list and checkout button_
-
-### Settings
-
-![Settings Screen](./screenshots/6.png)
-_Settings screen with various app preferences and logout_
+| Welcome                                       | Home                                          | Details                                       | Cart                                          | Settings                                      |
+| --------------------------------------------- | --------------------------------------------- | --------------------------------------------- | --------------------------------------------- | --------------------------------------------- |
+| <img src="./screenshots/1.png" width="160" /> | <img src="./screenshots/3.png" width="160" /> | <img src="./screenshots/4.png" width="160" /> | <img src="./screenshots/5.png" width="160" /> | <img src="./screenshots/6.png" width="160" /> |
 
 ## Key Features Implementation
 
@@ -131,6 +110,104 @@ _Settings screen with various app preferences and logout_
    ```bash
    npm run dev
    ```
+
+## Database Setup
+
+### 1. Create Supabase Project
+
+1. Go to [Supabase Dashboard](https://app.supabase.com)
+2. Click "New Project" and fill in the details:
+   - Organization (create one if needed)
+   - Project name
+   - Database password (save this securely)
+   - Region (choose closest to your users)
+
+### 2. Set Up Database Schema
+
+Execute these SQL commands in Supabase SQL Editor:
+
+```sql
+-- Create products table
+create table products (
+  id uuid default uuid_generate_v4() primary key,
+  name text not null,
+  description text,
+  price decimal(10,2) not null,
+  image_url text,
+  category text,
+  rating decimal(2,1),
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Create profiles table
+create table profiles (
+  id uuid references auth.users on delete cascade primary key,
+  name text,
+  updated_at timestamp with time zone
+);
+
+-- Enable Row Level Security (RLS)
+alter table products enable row level security;
+alter table profiles enable row level security;
+
+-- Create RLS policies
+create policy "Products are viewable by everyone" on products
+  for select using (true);
+
+create policy "Profiles are viewable by owners" on profiles
+  for select using (auth.uid() = id);
+
+create policy "Profiles can be updated by owners" on profiles
+  for update using (auth.uid() = id);
+```
+
+### 3. Seed Sample Data
+
+Add sample products using this SQL:
+
+```sql
+insert into products (name, description, price, image_url, category, rating)
+values
+  ('Cappuccino', 'Classic Italian coffee drink with equal parts espresso, steamed milk, and milk foam', 4.99, 'https://your-storage-url/cappuccino.jpg', 'Hot Coffee', 4.5),
+  ('Latte', 'Espresso with steamed milk and a light layer of milk foam', 4.49, 'https://your-storage-url/latte.jpg', 'Hot Coffee', 4.3),
+  ('Cold Brew', 'Smooth, cold-steeped coffee served over ice', 3.99, 'https://your-storage-url/cold-brew.jpg', 'Cold Coffee', 4.7);
+```
+
+### 4. Set Up Storage
+
+1. Go to Storage in Supabase Dashboard
+2. Create a new public bucket named 'product-images'
+3. Update storage policies:
+   ```sql
+   create policy "Product images are publicly accessible"
+   on storage.objects for select
+   using (bucket_id = 'product-images');
+   ```
+
+### 5. Configure Authentication
+
+1. Go to Authentication settings in Supabase Dashboard
+2. Enable Email authentication
+3. Configure email templates (optional)
+4. Add your app's URL to the Site URL list
+5. Set up any additional providers (Google, Apple, etc.)
+
+### 6. Get API Credentials
+
+1. Go to Project Settings > API
+2. Copy your:
+   - Project URL (EXPO_PUBLIC_SUPABASE_URL)
+   - Anon Key (EXPO_PUBLIC_SUPABASE_ANON_KEY)
+3. Add these to your .env file
+
+### 7. Enable Realtime Features (Optional)
+
+For real-time updates, enable Realtime in the Database settings:
+
+```sql
+-- Enable realtime for products
+alter publication supabase_realtime add table products;
+```
 
 ## Contributing
 

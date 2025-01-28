@@ -63,12 +63,13 @@ A modern, feature-rich mobile application for a coffee shop built with React Nat
 
 ## Screenshots
 
-<div style="display: flex; justify-content: space-between;">
-  <img src="./screenshots/1.png" width="19%" alt="Welcome Screen" />
-  <img src="./screenshots/3.png" width="19%" alt="Home Screen" />
-  <img src="./screenshots/4.png" width="19%" alt="Product Details" />
-  <img src="./screenshots/5.png" width="19%" alt="Shopping Cart" />
-  <img src="./screenshots/6.png" width="19%" alt="Settings Screen" />
+<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between;">
+  <img src="./screenshots/1.png" width="32%" alt="Welcome Screen" />
+  <img src="./screenshots/2.png" width="32%" alt="Login Screen" />
+  <img src="./screenshots/3.png" width="32%" alt="Home Screen" />
+  <img src="./screenshots/4.png" width="32%" alt="Product Details" />
+  <img src="./screenshots/5.png" width="32%" alt="Shopping Cart" />
+  <img src="./screenshots/6.png" width="32%" alt="Settings Screen" />
 </div>
 
 ## Key Features Implementation
